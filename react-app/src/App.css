@@ -1,0 +1,67 @@
+span{
+  font-weight: 500;
+  font-size: 15px;
+  color: black;
+}
+
+#logo{
+  width: 0 auto;
+  height: 20px;
+}
+
+a{
+  text-decoration: none; 
+}
+
+#navbar{
+  float: right;
+  color: white;
+}
+
+input{
+  border: none;
+  border-bottom: 2px solid #3cba92;
+  width: 100%;
+  outline: none;
+  text-align: center;
+}
+
+.formInput{
+  padding: 20px;
+}
+
+.form{
+  padding: 80px;
+  margin: 30px;
+  border: 5px solid #3cba92;
+}
+
+button{
+  width: 100%;
+  border: none;
+  padding: 12px;
+  background-color: #3cba92;
+  font-weight: 1000;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+input[type=submit]{
+  width: 100%;
+  border: none;
+  padding: 12px;
+  background-color: #3cba92;
+  font-weight: 1000;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#headerBackground{
+  background-image: url('assets/bgHeader.jpg');
+  width: 100%;
+  height: 60vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 20px;
+}
