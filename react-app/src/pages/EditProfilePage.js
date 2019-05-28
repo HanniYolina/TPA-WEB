@@ -6,6 +6,7 @@ import Loading from '../components/Loading';
 import ProfilePicture from '../components/ProfilePicture';
 import {Link} from 'react-router-dom'
 import ChangePassword from '../containers/ChangePassword';
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     height : 100vh;
@@ -217,6 +218,7 @@ class EditProfilePage extends React.Component{
                 {deleteButton}
                 {loading}
                 <NavBar></NavBar>
+                <BreadCrumbs></BreadCrumbs>
                 <Container>
                     <ProfileContainer>
                         <TopContainer>

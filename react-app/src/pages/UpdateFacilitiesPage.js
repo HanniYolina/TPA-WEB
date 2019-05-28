@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Axios from 'axios'
 import { Redirect } from 'react-router-dom'
 import Loading from '../components/Loading'
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const SplitMain = styled('div')`
     width : 50%;
@@ -126,6 +127,7 @@ class UpdateFacilities extends React.Component{
                 {this.changePage()}
                 {this.state.facilities ? <div>
                     <NavBar></NavBar>
+                    <BreadCrumbs></BreadCrumbs>
                     <MainDisplay>
                         <SplitMain>
                             <Label>Name</Label>

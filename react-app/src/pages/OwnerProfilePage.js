@@ -5,6 +5,7 @@ import Loading from '../components/Loading';
 import Axios from 'axios'
 import ProfilePicture from '../components/ProfilePicture';
 import {Redirect} from 'react-router-dom'
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
@@ -202,6 +203,7 @@ class OwnerProfilePage extends React.Component{
                 {this.checkUser()}
                 {loading}
                 <NavBar></NavBar>
+                <BreadCrumbs></BreadCrumbs>
                 <Container>
                     <ProfileContainer>
                         <TopContainer>

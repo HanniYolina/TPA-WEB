@@ -17,25 +17,39 @@ class GuestLogin extends React.Component {
 
             status : "",
             errorEmail : "",
-            errorPassword : ""
+            errorPassword : "",
+            rememberme : false
         }
     }
 
     dataChange(ev){
-        this.setState({
-            [ev.target.name] : ev.target.value
-        })
+        if(ev.target.type == "checkbox"){
+            this.setState({
+                [ev.target.name] : ev.target.checked
+            })
+        }
+        else{
+            this.setState({
+                [ev.target.name] : ev.target.value
+            })
+        }
     }
 
     checkUser(){
-        if(this.state.type == 1){
-            return <Redirect to="/"/>
+        if(this.state.userStatus == 2){
+            //banned 
+            return <Redirect to="/banned"/>
         }
-        else if(this.state.type == 2){
-            return <Redirect to="/manageRentHouse"/>
-        }
-        else if(this.state.type == 3){
-            return <Redirect to="/manageFacilityPage"/>
+        else{
+            if(this.state.type == 1){
+                return <Redirect to="/"/>
+            }
+            else if(this.state.type == 2){
+                return <Redirect to="/manageRentHouse"/>
+            }
+            else if(this.state.type == 3){
+                return <Redirect to="/manageFacilityPage"/>
+            }
         }
     }
 
@@ -48,7 +62,8 @@ class GuestLogin extends React.Component {
             token: sessionStorage.getItem('token')
         }).then(response => {
             this.setState({
-                type : response.data.user.type
+                type : response.data.user.type,
+                userStatus : response.data.user.status
             });
             this.props.onLogin(response.data.user);
         })
@@ -61,9 +76,10 @@ class GuestLogin extends React.Component {
         const email = this.state.email
         const password = this.state.password
         const type = this.state.type
+        const rememberme = this.state.rememberme
         
         const data = {
-            email,password,type
+            email,password,type,rememberme
         }
 
         this.setState({
@@ -79,7 +95,6 @@ class GuestLogin extends React.Component {
                 if(this.state.message == 'success') {
                     sessionStorage.setItem('token', response.data.data.token);
                     this.getUser();
-                    this.props.history.replace('/');
                 }
                 else{
                     this.setState({
@@ -126,7 +141,7 @@ class GuestLogin extends React.Component {
                             {errorMessage}
                             <button>Login</button>
                             
-                            <span> <input style={{ width : '40px'}} type="checkbox"/> Remember Me</span>
+                            <span> <input style={{ width : '40px'}} name="rememberme" type="checkbox" onChange={this.dataChange.bind(this)} /> Remember Me</span>
                             <div>
                                 <br></br>
                                 <span>Dont have account? <Link to="/register/guest">Register Now!</Link></span>

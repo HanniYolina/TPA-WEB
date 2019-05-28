@@ -41,14 +41,19 @@ class PopUp extends React.Component{
     }
 
     render() {  
+        let button;
+        if(this.props.type != 'Banned'){
+            button = 
+            <Display>
+                <button onClick={this.change.bind(this)} value="cancel">Cancel</button>
+                <button onClick={this.change.bind(this)} value={this.props.type}>{this.props.type}</button>
+            </Display>
+        }
         return (  
             <Popup>
                 <PopupInner>
-                    <Text>Are you sure to delete? </Text>
-                    <Display>
-                        <button onClick={this.change.bind(this)} value="cancel">Cancel</button>
-                        <button onClick={this.change.bind(this)} value="delete">Delete</button>
-                    </Display>
+                    <Text>{this.props.text}</Text>
+                    {button}
                 </PopupInner>
             </Popup>
         )}  

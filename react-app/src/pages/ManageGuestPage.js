@@ -5,6 +5,7 @@ import Axios from 'axios'
 import {Redirect} from 'react-router-dom'
 import GuestDetail from '../containers/GuestDetail'
 import Loading from '../components/Loading'
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
@@ -64,6 +65,7 @@ class ManageGuestPage extends React.Component{
                 {this.checkUser()}
                 <Container>
                     <NavBar></NavBar>
+                    <BreadCrumbs></BreadCrumbs>
                     {
                         this.state.user && this.state.user.map((user, key)=> (
                            <GuestDetail user={user} key={key}></GuestDetail>

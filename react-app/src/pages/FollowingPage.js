@@ -5,6 +5,7 @@ import Axios from 'axios'
 import UserDetail from '../containers/UserDetail';
 import Loading from '../components/Loading';
 import {Redirect} from 'react-router-dom'
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
@@ -17,7 +18,8 @@ class FollowingPage extends React.Component{
         super();
 
         this.state = {
-            user : []
+            user : [],
+            id : 0
         }
     }
     getFollowing(){
@@ -40,18 +42,26 @@ class FollowingPage extends React.Component{
             loading : true
         })
 
+        console.log(this.state.follow)
+
         this.state.follow && this.state.follow.map((follow, key)=> (
             //get owner = get user by id
             Axios.post('http://localhost:8000/api/getOwner', {
                 token: sessionStorage.getItem('token'),
                 id : follow.user_id
             }).then(response => {
-                this.state.user.push(response.data)
+                let user = this.state.user
+                user.push(response.data)
+
                 this.setState({
-                    loading : false,
+                    user : user
                 })
             })      
         ))
+        
+        this.setState({
+            loading : false,
+        })
     }
 
     checkUser(){
@@ -102,6 +112,7 @@ class FollowingPage extends React.Component{
                 {loading}
                 <Container>
                     <NavBar></NavBar>
+                    <BreadCrumbs></BreadCrumbs>
                     {
                         this.state.user && this.state.user.map((user, key)=> (
                            <UserDetail user={user} key={key}></UserDetail>

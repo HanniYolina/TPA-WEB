@@ -45,6 +45,10 @@ class OwnerController extends UserController
         $credentials['phone'] = $validated['phone'];
         $credentials['password'] = $validated['password'];
 
+        if($request->rememberme){
+            JWTAuth::factory()->setTTL(60*24*7);
+        }
+
         try {
             if (! $token = JWTAuth::attempt($credentials, ['exp' => Carbon::now()->addHour(6)->timestamp])) {
                 return response()->json([

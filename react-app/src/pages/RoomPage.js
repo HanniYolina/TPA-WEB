@@ -9,6 +9,7 @@ import PopUp from '../components/PopUp';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import NavBar from '../containers/NavBar';
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const OwnerProfile = styled('div')`
     text-decoration:none;
@@ -142,7 +143,7 @@ class RoomPage extends React.Component{
 
         let deleteButton
         if(this.state.delete){
-            deleteButton = <PopUp buttonPopup={this.buttonPopup.bind(this)}></PopUp>
+            deleteButton = <PopUp text="Are you sure to delete?" type="delete" buttonPopup={this.buttonPopup.bind(this)}></PopUp>
         }
         else{
             if(this.state.popup == "delete"){
@@ -154,6 +155,7 @@ class RoomPage extends React.Component{
             <div>
                 {loading}
                 <NavBar></NavBar>
+                <BreadCrumbs></BreadCrumbs>
                 {page}
                 {button}
                 {deleteButton}

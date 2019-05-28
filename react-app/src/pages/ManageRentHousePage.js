@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import Axios from 'axios'
 import RoomDetail from '../containers/RoomDetail';
 import { Redirect } from 'react-router-dom'
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
@@ -122,6 +123,7 @@ class ManageRentHousePage extends React.Component{
                 {this.checkUser()}
                 <Container>
                    <NavBar></NavBar>
+                   <BreadCrumbs></BreadCrumbs>
                     <Tab>
                         <button style={divStyle} value="add" onClick={this.buttonClicked.bind(this)}>Add Rent House</button>
                         <button style={divStyle} value="update" onClick={this.buttonClicked.bind(this)}>Update Rent House</button>

@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import Axios from 'axios';
 import PublicFacilities from '../containers/PublicFacilities'
 import Loading from '../components/Loading';
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 80vw;
@@ -616,6 +617,7 @@ class FormUpdateApartmentPage extends React.Component{
                     <div>
                         {loading}
                         <NavBar></NavBar>
+                        <BreadCrumbs></BreadCrumbs>
                         <Container>
                             <form onSubmit={this.submit.bind(this)} id="KostForm">
                                 {page}

@@ -5,6 +5,7 @@ import Loading from '../components/Loading'
 import NavBar from '../containers/NavBar';
 import PublicFacilities from '../containers/PublicFacilities';
 import {Redirect} from 'react-router-dom';
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
@@ -228,6 +229,7 @@ class ManageFacilityPage extends React.Component{
                 {loading}
                <Container>
                    <NavBar></NavBar>
+                   <BreadCrumbs></BreadCrumbs>
                     <Tab>
                         <button style={divStyle} value="add" onClick={this.pageChange.bind(this)}>Add Facility</button>
                         <button style={divStyle} value="update" onClick={this.pageChange.bind(this)}>Update Facility</button>

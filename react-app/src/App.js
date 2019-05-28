@@ -26,6 +26,12 @@ import FormApartmentPage from './pages/FormApartmentPage';
 import FormUpdateApartmentPage from './pages/FormUpdateApartmentPage'
 import FollowingPage from './pages/FollowingPage';
 import ManageGuestPage from './pages/ManageGuestPage';
+import BannedPage from './pages/BannedPage';
+import ManageOwnerPage from './pages/ManageOwnerPage';
+import ManagePremiumPage from './pages/ManagePremiumPage'
+import UpdatePremium from './pages/UpdatePremium';
+import PremiumProduct from './pages/PremiumProduct';
+import OrderPremiumPage from './pages/OrderPremiumPage'
 
 class App extends Component {
   constructor(){
@@ -95,6 +101,7 @@ class App extends Component {
             <Route path='/profile' component={() => <ProfilePage mode={this.state.mode}/>} exact />
             <Route path='/editProfile' component={EditProfilePage}></Route>
             <Route path='/changePassword' component={ChangePassword}></Route>
+            <Route path='/banned' component={BannedPage}></Route>
 
             <Route path='/chat' component={()=> <Chat send={this.send}></Chat>}></Route>
 
@@ -110,6 +117,8 @@ class App extends Component {
             <Route path='/manageApartment' component={ManageApartmentPage}></Route>
             <Route path='/formApartment' component={FormApartmentPage}></Route>
             <Route path='/formUpdateApartment/:id' component={FormUpdateApartmentPage}></Route>
+            <Route path='/premiumProduct' component={PremiumProduct}></Route>
+            <Route path='/orderPremium' component={OrderPremiumPage}></Route>
 
             {/* admin */}
             <Route path='/manageFacilityPage' component={ManageFacilityPage}></Route>
@@ -117,6 +126,10 @@ class App extends Component {
             <Route path='/deleteFacilitiesPage/:id' component={DeleteFacilities}></Route>
 
             <Route path='/manageGuestPage' component={ManageGuestPage}></Route>
+            <Route path='/manageOwnerPage' component={ManageOwnerPage}></Route>
+
+            <Route path='/managePremiumPage' component={ManagePremiumPage}></Route>
+            <Route path='/updatePremium/:id' component={UpdatePremium}></Route>
         </BrowserRouter>
      </div>
     );

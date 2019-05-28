@@ -65,20 +65,26 @@ class NavBar extends React.Component{
             if(this.state.user.type == 2){
                 button = 
                 <span>
+                    <Link to="/premiumProduct"><NavItem><span>Premium Product</span></NavItem></Link>                    
                     <Link to="/manageRentHouse"><NavItem><span>Manage Rent House</span></NavItem></Link>
                     <Link to="/manageApartment"><NavItem><span>Manage Apartment</span></NavItem></Link>
+                    <Link to="/chat"><NavItem><span>Chat</span></NavItem></Link>
                 </span>
             }
             else if(this.state.user.type == 1){
                 button = 
                 <span>
+                    <Link to="/chat"><NavItem><span>Chat</span></NavItem></Link>
                     <Link to="/followingPage"><NavItem><span>Following Page</span></NavItem></Link>
                 </span>
             }
             else if(this.state.user.type == 3){
                 button = 
                 <span>
+                    <Link to="/managePremiumPage"><NavItem><span>Manage Premium</span></NavItem></Link>
                     <Link to="/manageGuestPage"><NavItem><span>Manage Guest</span></NavItem></Link>
+                    <Link to="/manageOwnerPage"><NavItem><span>Manage Owner</span></NavItem></Link>
+                    <Link to="/manageFacilityPage"><NavItem><span>Manage Facility</span></NavItem></Link>
                 </span>
             }
             // else if(this.props)
@@ -88,8 +94,7 @@ class NavBar extends React.Component{
                     <Link to='/'><img src={logoImg} id="logo"></img></Link>
 
                     <div id='navbar'>
-                        {button}
-                        <Link to="/chat"><NavItem><span>Chat</span></NavItem></Link> 
+                        {button} 
                         <Link to='/profile'><NavItem><span>Profile</span></NavItem></Link>
                         <Link to='/'><NavItem onClick={this.deleteToken}><span>Log Out</span></NavItem></Link>   
                     </div>

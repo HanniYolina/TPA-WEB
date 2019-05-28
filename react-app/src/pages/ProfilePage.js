@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom';
 import Axios from 'axios';
 import Loading from '../components/Loading'
 import ProfilePicture from '../components/ProfilePicture';
+import BreadCrumbs from '../components/BreadCrumbs';
 
 const verifFrame = {
     display : 'flex',
@@ -226,6 +227,7 @@ class ProfilePage extends React.Component{
             <div>
                 {loading}
                 <NavBar></NavBar>
+                <BreadCrumbs></BreadCrumbs>
                 <div style={container}>
                     <div style={{height : '10vh'}}>
                         asdsaddasda

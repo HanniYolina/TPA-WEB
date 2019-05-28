@@ -108,7 +108,7 @@ class UserController extends Controller
     }
 
     public function getUserById(Request $request){
-        $user = DB::table('Users')->where('id', $request->id)->first();
+        $user = User::where('id', $request->id)->first();
         $path = "images/" . $user->picture_name;
         $storagePage = Storage::url($path);
 
@@ -166,5 +166,17 @@ class UserController extends Controller
         $user = User::where('type', $request->type)->get();
 
         return response()->json($user);
+    }
+
+    public function banUser(Request $request){
+        //status 2 banned
+        $user = User::where('id', $request->id)->first();
+        $user->status = 2;
+        $user->save();
+
+        return response()->json([
+            'message' => 'success'
+        ]);
+
     }
 }

@@ -60,7 +60,7 @@ class HomePage extends React.Component{
                 this.setState({
                     loading : false
                 });
-                console.log(this.state.room);
+                // console.log(this.state.room);
             })
         })
     }

@@ -19,25 +19,39 @@ class OwnerLogin extends React.Component{
             user : "",
             type : 0,
             errorPassword : "",
-            errorPhone : ""
+            errorPhone : "",
+            rememberme : false
         }
     }
 
     dataChange(ev){
-        this.setState({
-            [ev.target.name] : ev.target.value
-        })
+        if(ev.target.type == "checkbox"){
+            this.setState({
+                [ev.target.name] : ev.target.checked
+            })
+        }
+        else{
+            this.setState({
+                [ev.target.name] : ev.target.value
+            })
+        }
     }
 
     checkUser(){
-        if(this.state.type == 1){
-            return <Redirect to="/"/>
+        if(this.state.userStatus == 2){
+            //banned 
+            return <Redirect to="/banned"/>
         }
-        else if(this.state.type == 2){
-            return <Redirect to="/manageRentHouse"/>
-        }
-        else if(this.state.type == 3){
-            return <Redirect to="/manageFacilityPage"/>
+        else{
+            if(this.state.type == 1){
+                return <Redirect to="/"/>
+            }
+            else if(this.state.type == 2){
+                return <Redirect to="/manageRentHouse"/>
+            }
+            else if(this.state.type == 3){
+                return <Redirect to="/manageFacilityPage"/>
+            }
         }
     }
 
@@ -51,7 +65,8 @@ class OwnerLogin extends React.Component{
                 token: sessionStorage.getItem('token')
             }).then(response => {
                 this.setState({
-                    type : response.data.user.type
+                    type : response.data.user.type,
+                    userStatus : response.data.user.status
                 });
                 this.props.onLogin(response.data.user);
             })
@@ -64,10 +79,11 @@ class OwnerLogin extends React.Component{
 
         const phone = this.state.phone
         const password = this.state.password
+        const rememberme = this.state.rememberme
         // const type = this.state.type
 
         const data = {
-            phone,password
+            phone,password,rememberme
         }
 
         this.setState({
@@ -131,7 +147,7 @@ class OwnerLogin extends React.Component{
                         {errorMessage}
                         <button>Login</button>
 
-                        <span> <input style={{ width : '40px'}} type="checkbox"/> Remember Me</span>
+                        <span> <input style={{ width : '40px'}} name="rememberme" type="checkbox" onChange={this.dataChange.bind(this)} /> Remember Me</span>
                         <div>
                             <br></br>
                             <span>Dont have account? <Link to="/register/owner">Register Now!</Link></span>
