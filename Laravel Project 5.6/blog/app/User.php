@@ -11,6 +11,7 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use Notifiable;
+    protected $perPage = 10;
     protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.

@@ -28,7 +28,8 @@ class FacilitiesStoreRequest extends FormRequest
         return [
             'name' => 'required|string',
             'icon' => 'mimes:jpeg,jpg,png|required|max:10000',
-            'group' => 'required|string'
+            'group' => 'required|string',
+            'id' => ''
         ];
     }
 

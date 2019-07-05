@@ -7,6 +7,7 @@ use App\Http\Requests\ApartmentStoreRequest;
 use App\Http\Requests\RoomStoreRequest;
 use App\Properties;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -24,7 +25,8 @@ class ApartmentController extends Controller
 
         $properties->propertiesable_id = $apartment->id;
 
-        $properties->id = Str::uuid();
+        $uuid = Str::uuid();
+        $properties->id = $uuid;
         $properties->owner_id = $validated['owner_id'];
 
         $apartment->unit_type = $validated['unit_type'];
@@ -95,12 +97,27 @@ class ApartmentController extends Controller
         $properties->public_facilities = $validated['public_facilities'];
         $properties->additional_info = $validated['additional_info'];
         $properties->additional_fee = $validated['additional_fee'];
-        $properties->address = $validated['address'];
-
+        $properties->latitude = $validated['latitude'];
+        $properties->longitude = $validated['longitude'];
+        $properties->status = 1;
         $apartment->Properties()->save($properties);
 
         $apartment->save();
 
+        //redis
+        $redis = Redis::connection();
+        $name = explode(' ', $validated['name']);
+
+        $json = [
+            'id' => $uuid,
+            'name' => $validated['name']
+        ];
+
+        $json_en = json_encode($json);
+
+        foreach ($name as $key){
+            $redis->lpush($key, $json_en);
+        }
         return response()->json([
             'status' => 'success'
         ]);
@@ -117,7 +134,7 @@ class ApartmentController extends Controller
             ]);
         }
 
-        $room = Properties::where('owner_id', $request->owner_id)->where('propertiesable_type', 'App\Apartment')->get();
+        $room = Properties::where('owner_id', $request->owner_id)->where('propertiesable_type', 'App\Apartment')->paginate();
         return response()->json($room);
     }
 }

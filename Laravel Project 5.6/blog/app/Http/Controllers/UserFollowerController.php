@@ -81,9 +81,40 @@ class UserFollowerController extends Controller
             ]);
         }
 
-        $allFollow = UserFollower::where('follower_id', $request->id)->get();
+        $allFollow = UserFollower::where('follower_id', $request->id)->paginate();
 
         return response()->json(($allFollow));
     }
 
+    public function countFollower(Request $request){
+        $validate = Validator::make($request->all(),[
+            'id' => 'required|string',
+        ]);
+
+        if($validate->fails()){
+            return response()->json([
+                'message' => $validate->errors()->first()
+            ]);
+        }
+
+        $allFollow = UserFollower::where('user_id', $request->id)->get()->count();
+
+        return response()->json(($allFollow));
+    }
+
+    public function countFollowing(Request $request){
+        $validate = Validator::make($request->all(),[
+            'id' => 'required|string',
+        ]);
+
+        if($validate->fails()){
+            return response()->json([
+                'message' => $validate->errors()->first()
+            ]);
+        }
+
+        $allFollow = UserFollower::where('follower_id', $request->id)->get()->count();
+
+        return response()->json(($allFollow));
+    }
 }

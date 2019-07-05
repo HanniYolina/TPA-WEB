@@ -35,7 +35,8 @@ class FacilitiesController extends Controller
     }
 
     public function getFacilities(){
-        $facilities = Facilities::all();
+        $facilities = Facilities::paginate();
+//        $facilities = $facilities->paginate();
         return response()->json($facilities);
     }
 
@@ -90,4 +91,33 @@ class FacilitiesController extends Controller
 
     }
 
+    public function countFacility(){
+        $facility = Facilities::all();
+        $facilityCount = $facility->count();
+
+        return response()->json($facilityCount);
+    }
+
+    public function getFilteredFacility(Request $request){
+        if($request->name){
+            $facility = Facilities::where('name', 'like', '%'.$request->name.'%');
+            if($request->group){
+                $facility = $facility->where('group', $request->group)->paginate();
+
+                return response()->json($facility);
+            }
+
+            return response()->json($facility->paginate());
+        }
+        else{
+            if($request->group){
+                $facility = Facilities::where('group', $request->group)->paginate();
+
+                return response()->json($facility);
+            }
+
+            $facility = Facilities::paginate();
+            return response()->json($facility);
+        }
+    }
 }

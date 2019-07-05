@@ -3,7 +3,7 @@ import NavBar from '../containers/NavBar';
 import styled from 'styled-components'
 import emailLogo from '../assets/emailLogo.png'
 import phoneLogo from '../assets/phoneLogo.png'
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import Axios from 'axios';
 import Loading from '../components/Loading'
 import ProfilePicture from '../components/ProfilePicture';
@@ -19,7 +19,6 @@ const verifFrame = {
 const container = {
     display : 'flex',
     flexDirection : 'column',
-    backgroundColor : 'red'
 }
 
 const emailPhone ={
@@ -107,7 +106,8 @@ class ProfilePage extends React.Component{
             phone : "",
 
             message : "",
-            path : ""
+            path : "",
+            allFollowing : ""
         }
     }
 
@@ -121,6 +121,7 @@ class ProfilePage extends React.Component{
         }).then(response => {
             this.setState({
                 status : response.status,
+                id : response.data.user.id,
                 name : response.data.user.name,
                 joinSince : response.data.user.created_at,
                 emailVerifed : response.data.user.email_verified_at,
@@ -130,6 +131,10 @@ class ProfilePage extends React.Component{
                 picture_name : response.data.user.picture_name,
                 path : response.data.path,
                 loading : false
+            }, ()=> {
+                if(this.state.type == 1){
+                    this.getFollowing()       
+                }
             })
         })
     }
@@ -175,6 +180,32 @@ class ProfilePage extends React.Component{
                 loading : false
             })
         })
+    }
+
+    getFollowing(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllFollowing', {
+            token: sessionStorage.getItem('token'),
+            id : this.state.id
+        }).then(response => {
+            this.setState({
+                allFollowing : response.data,
+                loading : false
+            })
+        })
+    }
+
+    checkUser(){
+        if(sessionStorage.getItem('token') == null){
+            return <Redirect to="/login" />
+        }
+        if(this.state.type == 3){
+            return <Redirect to="/adminDashboard"/>
+        }
+        
     }
 
     render(){    
@@ -225,13 +256,11 @@ class ProfilePage extends React.Component{
         }
         return(
             <div>
+                {this.checkUser()}
                 {loading}
                 <NavBar></NavBar>
                 <BreadCrumbs></BreadCrumbs>
                 <div style={container}>
-                    <div style={{height : '10vh'}}>
-                        asdsaddasda
-                    </div>
                     <div style={{width : '100vw', backgroundColor : 'white' , height : '90vh',  display: 'flex'}}>
                         <div style={{width : '40vw', height : '90vh'}}>
                             <ProfileContainer>
@@ -254,7 +283,7 @@ class ProfilePage extends React.Component{
                                         <Data><div> {this.state.city} </div></Data>
                                         <Data><div> {this.state.joinSince} </div></Data>
                                         <Data><div> a </div></Data>
-                                        <Data><div> a </div></Data>
+                                        <Data><div> {this.state.allFollowing.length} </div></Data>
                                         <Data><Link to="/editProfile">Edit Profile</Link></Data>
                                     </DivProfile>
                                 </DivPicture>

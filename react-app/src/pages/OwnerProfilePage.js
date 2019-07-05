@@ -6,6 +6,7 @@ import Axios from 'axios'
 import ProfilePicture from '../components/ProfilePicture';
 import {Redirect} from 'react-router-dom'
 import BreadCrumbs from '../components/BreadCrumbs';
+import RoomDetail from '../containers/RoomDetail'
 
 const Container = styled('div')`
     width : 100vw;
@@ -63,7 +64,8 @@ class OwnerProfilePage extends React.Component{
 
             follower_id : null,
             user_id : null,
-            followed : false
+            followed : false,
+            allAparment : null
         }
     }
     getOwner(){
@@ -110,10 +112,10 @@ class OwnerProfilePage extends React.Component{
         }
         if(this.state.type != 1){
             if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }
@@ -184,6 +186,43 @@ class OwnerProfilePage extends React.Component{
         }
     }
 
+    getAllRentHouse(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllRoom', {
+           owner_id : this.props.match.params.id,
+           token : sessionStorage.getItem('token')
+        }).then(response => {
+            this.setState({
+                allRoom : response.data.data,
+                loading : false
+            })
+        })
+    }
+
+    getAllApartment(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllApartment', {
+           owner_id : this.props.match.params.id,
+           token : sessionStorage.getItem('token')
+        }).then(response => {
+            this.setState({
+                allAparment : response.data.data,
+                loading : false
+            },()=>console.log(this.state.allAparment))
+        })
+    }
+
+    componentWillMount(){
+        this.getAllApartment();
+        this.getAllRentHouse();
+    }
+
     render(){
         let loading;
         if(this.state.loading){
@@ -228,7 +267,21 @@ class OwnerProfilePage extends React.Component{
                                 </MiddleContainer>
                             </TopLeftContainer>
                         </TopContainer>
-                        
+
+                        <br></br>
+                        <label>Kosan</label>
+                        {
+                            this.state.allRoom && this.state.allRoom.map((room, key)=> (
+                                <RoomDetail room={room} key={key} type="view"></RoomDetail>
+                            ))
+                        }
+
+                        <label>Apartment</label>
+                        {
+                            this.state.allAparment && this.state.allAparment.map((room, key)=> (
+                                <RoomDetail room={room} key={key} type="view"></RoomDetail>
+                            ))
+                        }
                     </ProfileContainer>
                 </Container>
             </div>

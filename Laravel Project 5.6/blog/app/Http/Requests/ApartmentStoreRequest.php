@@ -47,7 +47,8 @@ class ApartmentStoreRequest extends FormRequest
             'additional_info' => '',
             'additional_fee' => '',
 
-            'address' => 'required'
+            'latitude' => '',
+            'longitude' => ''
         ];
     }
 

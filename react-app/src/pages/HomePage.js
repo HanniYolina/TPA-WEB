@@ -44,11 +44,111 @@ class HomePage extends React.Component{
 
         this.state = {
             room : null,
+            urlKost : `http://localhost:8000/api/getNearestKost?page=1`, 
+            urlApartment : `http://localhost:8000/api/getNearestApartment?page=1`, 
 
+            nearestKost : [],
+            nearestPremiumKost : [],
+
+            nearestApartment : [],
+            nearestPremiumApartment : [],
+
+            loadCount : 0,
             loading : false
         }
     }
+
+    getNearestandPremiumKost(){
+        let lat;
+        let long;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition( (position)=> {
+                lat = position.coords.latitude;
+                long = position.coords.longitude;
+
+                this.setState({
+                    loading : true,
+                    loadCount : 1
+                })
+
+                Axios.post(this.state.urlKost,
+                {
+                        latitude : lat,
+                        longitude : long
+                }
+                ).then(response => {
+                    this.setState({
+                        nearestKost : response.data.data,
+                        urlKost : response.data.next_page_url,
+                        loading : false,
+                        loadCount : 0
+                    }, ()=>this.checkPremium())
+                })
+            });
+        }
+    }
+
+    getNearestandPremiumApartment(){
+        let lat;
+        let long;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition( (position)=> {
+                lat = position.coords.latitude;
+                long = position.coords.longitude;
+
+                this.setState({
+                    loading : true,
+                    loadCount : 1
+                })
+
+                Axios.post(this.state.urlApartment,
+                {
+                        latitude : lat,
+                        longitude : long
+                }
+                ).then(response => {
+                    this.setState({
+                        nearestApartment : response.data.data,
+                        urlApartment : response.data.next_page_url,
+                        loading : false,
+                        loadCount : 0
+                    }, ()=>this.checkPremiumApartment())
+                })
+            });
+        }
+    }
+
+    checkPremium(){
+        this.state.nearestKost.forEach(element => {
+            Axios.post('http://localhost:8000/api/getPremiumOwnerById',{
+                user_id : element.user_id
+            }).then(response => {
+                if(response.data != null){
+                    this.setState({
+                        nearestPremiumKost : [...this.state.nearestPremiumKost, element]
+                    },()=>console.log(this.state.nearestPremiumKost))
+                }
+            }) 
+        });
+    }
+
+    checkPremiumApartment(){
+        this.state.nearestApartment.forEach(element => {
+            Axios.post('http://localhost:8000/api/getPremiumOwnerById',{
+                user_id : element.user_id
+            }).then(response => {
+                if(response.data != null){
+                    this.setState({
+                        nearestPremiumApartment : [...this.state.nearestPremiumApartment, element]
+                    })
+                }
+            }) 
+        });
+    }
+
     getProperties(){
+        this.getNearestandPremiumKost();
+        this.getNearestandPremiumApartment();
         this.setState({
             loading : true
         });
@@ -101,6 +201,8 @@ class HomePage extends React.Component{
                 </select>
             </div>
 
+
+             
             <br></br>
             <div style={{display : 'flex'}}>
                 <span>Kost</span>

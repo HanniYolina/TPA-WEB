@@ -8,6 +8,7 @@ use App\Http\Requests\RoomStoreRequest;
 use App\Properties;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -15,8 +16,8 @@ use Illuminate\Support\Str;
 class PropertiesController extends Controller
 {
     public function getRoom(){
-        $kost = Properties::where('propertiesable_type', 'App\Kost')->get();
-        $apartment = Properties::where('propertiesable_type', 'App\Apartment')->get();
+        $kost = Properties::where('propertiesable_type', 'App\Kost')->where('status', 1)->get();
+        $apartment = Properties::where('propertiesable_type', 'App\Apartment')->where('status', 1)->get();
         return response()->json([
             'kost' => $kost,
             'apartment' => $apartment
@@ -128,6 +129,8 @@ class PropertiesController extends Controller
         $properties->additional_info = $validated['additional_info'];
         $properties->additional_fee = $validated['additional_fee'];
         $properties->address = $validated['address'];
+        $properties->latitude = $validated['latitude'];
+        $properties->longitude = $validated['longitude'];
 
         $properties->save();
 
@@ -213,11 +216,111 @@ class PropertiesController extends Controller
         $properties->additional_info = $validated['additional_info'];
         $properties->additional_fee = $validated['additional_fee'];
         $properties->address = $validated['address'];
+        $properties->latitude = $validated['latitude'];
+        $properties->longitude = $validated['longitude'];
 
         $properties->save();
 
         return response()->json([
             'message' => 'success'
         ]);
+    }
+
+    public function countProperties(Request $request){
+        $kost = Properties::where('propertiesable_type', 'App\Kost')->where('owner_id', $request->owner_id)->where('status', 1)->get();
+        $apartment = Properties::where('propertiesable_type', 'App\Apartment')->where('owner_id', $request->owner_id)->where('status', 1)->get();
+
+        $countKost = $kost->count();
+        $countApartment = $apartment->count();
+
+        return response()->json([
+           'countKost' => $countKost,
+           'countApartment' => $countApartment
+        ]);
+    }
+
+    public function banProperties(Request $request){
+        $properties = Properties::where('id', $request->id)->first();
+        $properties->status = 2;
+        $properties->save();
+        return response()->json([
+            'message' => 'success'
+        ]);
+    }
+
+    public function search(Request $request){
+        $keyword = $request->keyword;
+        $redis = Redis::connection();
+
+        $range = $redis->lrange($keyword, 0, 4);
+
+        if($range!=null){
+            $arr = [];
+            foreach ($range as $r){
+                array_push($arr,json_decode($r));
+            }
+
+            return response()->json($arr);
+        }
+
+        $properties = Properties::where('name', 'like', '%'.$keyword.'%')->get();
+
+        return response()->json($properties);
+    }
+
+    public function getNearestKost(Request $request){
+        $latitude = $request->latitude;
+        $longitude = $request->longitude;
+
+        $kost = Properties::where('propertiesable_type', 'App\Kost');
+        if($request->name != null){
+            $kost = $kost->where('name', 'like', '%'.$request->name.'%');
+        }
+
+        $kost = $kost->select(DB::raw('*, ( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
+            ->having('distance', '<', 1 )
+            ->orderBy('distance');
+
+        if($request->type == "get"){
+            $kost = $kost->where('id', '!=', $request->id)->get();
+        }
+        else{
+            $kost = $kost->simplePaginate();
+        }
+
+        return response()->json($kost);
+    }
+
+    public function getNearestApartment(Request $request){
+        $latitude = $request->latitude;
+        $longitude = $request->longitude;
+
+        $apartment = Properties::where('propertiesable_type', 'App\Apartment');
+        if($request->name != null){
+            $apartment = $apartment->where('name', 'like', '%'.$request->name.'%');
+        }
+
+        $apartment = $apartment->select(DB::raw('*, ( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
+            ->having('distance', '<', 1)
+            ->orderBy('distance');
+
+        if($request->type == "get"){
+            $apartment = $apartment->where('id', '!=', $request->id)->get();
+        }
+        else{
+            $apartment = $apartment->simplePaginate();
+        }
+
+        return response()->json($apartment);
+    }
+
+    public function getRadius(Request $request){
+        $latitude = $request->latitude;
+        $longitude = $request->longitude;
+
+        $properties = Properties::select(DB::raw('*, ( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
+            ->having('distance', '<',  1)->get()->count();
+
+        return $properties;
     }
 }

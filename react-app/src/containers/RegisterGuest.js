@@ -72,10 +72,10 @@ class RegisterGuest extends React.Component {
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }

@@ -9,7 +9,7 @@ import BreadCrumbs from '../components/BreadCrumbs';
 
 const Container = styled('div')`
     width : 100vw;
-    height : 50vh;
+    height : auto;
     margin 0 auto;
 `
 
@@ -19,30 +19,45 @@ class FollowingPage extends React.Component{
 
         this.state = {
             user : [],
-            id : 0
+            id : 0,
+
+            loadCount : 0,
+            url : 'http://localhost:8000/api/getAllFollowing?page=1',
+            follow : []
         }
     }
     getFollowing(){
-        this.setState({
-            loading : true
-        })
-        Axios.post('http://localhost:8000/api/getAllFollowing', {
-            token: sessionStorage.getItem('token'),
-            id : this.state.id
-        }).then(response => {
+        if(this.state.loadCount == 0){
             this.setState({
-                follow : response.data,
-                loading : false
-            },()=>this.getOwner())
-        })
+                loading : true,
+                loadCount : 1
+            })
+
+            
+            Axios.post(this.state.url, {
+                token: sessionStorage.getItem('token'),
+                id : this.state.id
+            }).then(response => {
+                let responseData = response.data.data
+                let tempFollow = this.state.follow
+
+                responseData.forEach(element => {
+                    tempFollow.push(element)
+                });
+                
+                this.setState({
+                    follow : tempFollow,
+                    loading : false,
+                    loadCount : 0
+                },()=>this.getOwner())
+            })
+        }
     }
 
     getOwner(){
         this.setState({
             loading : true
         })
-
-        console.log(this.state.follow)
 
         this.state.follow && this.state.follow.map((follow, key)=> (
             //get owner = get user by id
@@ -70,10 +85,10 @@ class FollowingPage extends React.Component{
         }
         if(this.state.type != 1){
             if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }
@@ -97,7 +112,20 @@ class FollowingPage extends React.Component{
     }
 
     componentDidMount(){
+        window.addEventListener('scroll', this.registerScrollEvent.bind(this))
         this.getUser();
+    }
+
+    registerScrollEvent(){
+        if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
+            if(this.state.loadCount == 0){
+                this.changePoint(this.state.lat, this.state.lng);
+            }
+        }
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener('scroll', this.registerScrollEvent.bind(this))
     }
 
     render(){

@@ -88,6 +88,7 @@
       <path value="$PROJECT_DIR$/blog/vendor/phenx/php-font-lib" />
       <path value="$PROJECT_DIR$/blog/vendor/phenx/php-svg-lib" />
       <path value="$PROJECT_DIR$/blog/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/blog/vendor/predis/predis" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />

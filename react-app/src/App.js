@@ -32,21 +32,33 @@ import ManagePremiumPage from './pages/ManagePremiumPage'
 import UpdatePremium from './pages/UpdatePremium';
 import PremiumProduct from './pages/PremiumProduct';
 import OrderPremiumPage from './pages/OrderPremiumPage'
+import ManageTransaction from './pages/ManageTransaction'
+import ManagePostPage from './pages/ManagePostPage'
+import PostPage from './pages/PostPage'
+import GeneralPostPage from './pages/GeneralPostPage'
+import HistoryPremiumPage from './pages/HistoryPremiumPage'
+import HistoryPage from './pages/HistoryPage'
+import ManageReport from './pages/ManageReportPage' 
+import OwnerDashboard from './pages/OwnerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import SearchPost from './pages/SearchPost';
+import GuestProfilePage from './pages/GuestProfilePage';
+import './font-awesome-4.7.0/css/font-awesome.min.css'
 
 class App extends Component {
   constructor(){
     super();
-    this.state={
+    this.state = {
       mode : 'desktop',
       id : ""
     }
-    connect(this.state.id);
   }
 
-  send(to_id){
+  send(to_id, from_id, content){
     //harusnya newMessagem from_id , to_id
     //kalo gni msh diri sndiri ngirim
-    socket.emit('newMessage', to_id, '2', 'asdadasdsa')
+    console.log(content)
+    socket.emit('newMessage', to_id, from_id, content)
   }
 
   changeMode(){
@@ -91,7 +103,7 @@ class App extends Component {
     return (
       <div>
         <BrowserRouter>
-            <Route path="/" component={NavBar} exact/>
+            <Route path="/" component={() => <NavBar mode={this.state.mode}/>} exact/>
             <Route path="/" component={HomePage} exact />
             <Route path="/login" component={LoginPage} exact />
             <Route path="/register/guest" component={RegisterGuest} exact/>
@@ -104,11 +116,15 @@ class App extends Component {
             <Route path='/banned' component={BannedPage}></Route>
 
             <Route path='/chat' component={()=> <Chat send={this.send}></Chat>}></Route>
+            <Route path='/generalPostPage' component={GeneralPostPage}></Route>
 
             {/* guest*/}
             <Route path='/ownerProfile/:id' component={OwnerProfilePage}></Route>
+            <Route path='/historyPage' component={HistoryPage}></Route>
+            <Route path='/guestProfilePage/:id' component={GuestProfilePage}></Route>            
         
             {/* owner */}
+            <Route path='/ownerDashboard' component={OwnerDashboard}></Route>
             <Route path='/manageRentHouse' component={ManageRentHousePage}></Route>
             <Route path='/formKost' component={FormKostPage}></Route>
             <Route path='/formUpdate/:id' component={FormUpdatePage}></Route>
@@ -119,8 +135,10 @@ class App extends Component {
             <Route path='/formUpdateApartment/:id' component={FormUpdateApartmentPage}></Route>
             <Route path='/premiumProduct' component={PremiumProduct}></Route>
             <Route path='/orderPremium' component={OrderPremiumPage}></Route>
+            <Route path='/historyPremium' component={HistoryPremiumPage}></Route>
 
             {/* admin */}
+            <Route path='/adminDashboard' component={AdminDashboard}></Route>
             <Route path='/manageFacilityPage' component={ManageFacilityPage}></Route>
             <Route path='/updateFacilitiesPage/:id' component={UpdateFacilities}></Route>
             <Route path='/deleteFacilitiesPage/:id' component={DeleteFacilities}></Route>
@@ -130,6 +148,15 @@ class App extends Component {
 
             <Route path='/managePremiumPage' component={ManagePremiumPage}></Route>
             <Route path='/updatePremium/:id' component={UpdatePremium}></Route>
+
+            <Route path='/manageTransaction' component={ManageTransaction}></Route>
+            <Route path='/managePost' component={ManagePostPage}></Route>
+            <Route path='/post/:id' component={PostPage} exact />
+
+            <Route path='/searchPost/:tag_id' component={SearchPost} exact />            
+
+            <Route path='/manageReport' component={ManageReport}></Route>
+
         </BrowserRouter>
      </div>
     );

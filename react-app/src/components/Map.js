@@ -5,6 +5,15 @@ import styled from 'styled-components'
 import Axios from 'axios'
 import {withRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
+import markerIcon from '../assets/markerIcon.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
 
 const Wrapper = styled.div`
     width : 100%;
@@ -15,15 +24,44 @@ const mapContainer = {
     padding : '50px'
 }
 var marker = {};
+var randomMarker = [];
+
+var greenIcon = L.icon({
+    iconUrl: markerIcon,
+
+    iconSize:     [38, 50], // size of the icon
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
 
 class Map extends React.Component{
     mapClick(e){
         
         if (marker) { // check
             this.mymap.removeLayer(marker); // remove
-        }
-        console.log(L);
 
+            for(let i=0; i<randomMarker.length; i++){
+                this.mymap.removeLayer(randomMarker[i])
+            }
+
+            if(this.props.search == "true"){
+                const min = -0.005;
+                const max = 0.005;
+                for(let i=0; i<5; i++){
+                    const randLat = min + Math.random() * (max - min);
+                    const randLong = min + Math.random() * (max - min);
+                    const newLat = parseFloat(e.latlng.lat)+randLat;
+                    const newLong = parseFloat(e.latlng.lng)+randLong;
+                    var marks = L.marker(L.latLng(parseFloat(newLat), parseFloat(newLong)),{icon : greenIcon}).addTo(this.mymap);
+                    this.countProperties(newLat, newLong, marks)
+                }
+            }
+        }
+
+        if(this.props.point){
+            this.props.point(parseFloat(e.latlng.lat), parseFloat(e.latlng.lng));
+            this.props.clearAll();
+        }
         marker = L.marker(
             L.latLng(
             parseFloat(e.latlng.lat),
@@ -35,8 +73,28 @@ class Map extends React.Component{
         var path = `https://us1.locationiq.com/v1/reverse.php?key=899758dd3d8f41&lat=${parseFloat(e.latlng.lat)}&lon=${parseFloat(e.latlng.lng)}&format=json`
         
         Axios.get(path).then(response => {
-            // console.log(response)
             this.props.onMapClicked(response.data);
+        })
+    }
+
+    onMarkerClicked(marks){
+        var point = marks.getLatLng()
+        if(this.props.point){
+            this.props.point(point.lat, point.lng, "fromMarker");
+        }
+    }
+
+    countProperties(lat, long, marks){
+        Axios.post("http://localhost:8000/api/getRadius",
+            {
+                latitude : lat,
+                longitude : long,
+            }
+            ).then(response => {
+                var count = response.data
+                marks.bindPopup("There is " + count + " properties near this area").on('click', this.onMarkerClicked.bind(this,marks));
+
+                randomMarker.push(marks)
         })
     }
 
@@ -62,7 +120,19 @@ class Map extends React.Component{
                     parseFloat(long)
                     )
                 ).addTo(this.mymap);
-                
+
+                if(this.props.search == "true"){
+                    const min = -0.01;
+                    const max = 0.01;
+                    for(let i=0; i<5; i++){
+                        const randLat = min + Math.random() * (max - min);
+                        const randLong = min + Math.random() * (max - min);
+                        const newLat = lat+randLat;
+                        const newLong = long+randLong;
+                        var marks = L.marker(L.latLng(parseFloat(newLat), parseFloat(newLong)), {icon : greenIcon}).addTo(this.mymap);
+                        this.countProperties(newLat, newLong, marks)
+                    }
+                }
                 this.mymap.on("click",(e)=> this.mapClick(e));
             });
         }

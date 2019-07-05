@@ -9,7 +9,7 @@ class Facilities extends Model
 {
     use SoftDeletes;
     protected $keyType = 'string';
-
+    protected $perPage = 10;
     protected $guarded = [
 
     ];

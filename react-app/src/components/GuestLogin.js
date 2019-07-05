@@ -45,10 +45,10 @@ class GuestLogin extends React.Component {
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }
@@ -68,6 +68,19 @@ class GuestLogin extends React.Component {
             this.props.onLogin(response.data.user);
         })
 
+    }
+
+    emailLoginNotif(){
+        if(this.state.email){
+            console.log("Tes")
+            Axios.post('http://localhost:8000/api/loginNotif', {
+                email: this.state.email
+            }).then(response => {
+
+            }).catch(error =>{
+
+            })
+        }
     }
 
     login(ev){
@@ -92,6 +105,7 @@ class GuestLogin extends React.Component {
                 status : response.status,
                 loading : false
             }, () => {
+                console.log(response.data)
                 if(this.state.message == 'success') {
                     sessionStorage.setItem('token', response.data.data.token);
                     this.getUser();
@@ -102,8 +116,13 @@ class GuestLogin extends React.Component {
                         errorEmail : response.data.email
                     })
                 }
-
                
+            })
+            
+        }).catch(error => {
+            this.emailLoginNotif();
+            this.setState({
+                loading : false
             })
         })
     }

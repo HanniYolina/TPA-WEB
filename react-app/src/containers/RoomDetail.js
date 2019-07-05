@@ -12,11 +12,6 @@ const RoomStyle = {
     boxShadow : '6px 8px lightgrey'
 }
 
-const image = {
-    width : '100%',
-    height : '70%',
-}
-
 const PP = styled('div')`
     width : 100%;
     height : 75%;
@@ -33,9 +28,7 @@ class RoomDetail extends React.Component{
         <div style={RoomStyle}>
             <Link to={{pathname : `/room/${room.id}`, state : {type : this.props.type}}}>
                 {room.picture_name ? <PP style={{backgroundImage: 'url(http://localhost:8000' + `${room.picture_name}` + ')'}}></PP> : null}
-                <span id="price">{room.name}</span>
-                <br></br>
-                {/* <span id="kostName">{room.price.month}</span> */}
+                <span>{room.name}</span>
             </Link>
         </div>
     )}

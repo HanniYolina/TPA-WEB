@@ -9,6 +9,7 @@ io.on('connection', function(socket){
     // io.emit('chat', 'hello my friend')
 
     socket.on('newMessage', function(to_id, from_id, message){
+        console.log(from_id, to_id,message)
         io.emit(to_id, from_id, message)
     })
 });

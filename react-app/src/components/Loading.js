@@ -6,7 +6,7 @@ const Container = styled('div')`
     width: 100vw;
     height : 100vh;
     position : fixed;
-    z-index : 50;
+    z-index : 1000;
     justify-content : center;
     display : flex;
 `

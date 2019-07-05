@@ -6,6 +6,7 @@ use App\Http\Requests\RoomStoreRequest;
 use App\Kost;
 use App\Properties;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -26,7 +27,8 @@ class KostController extends Controller
 
         $properties->propertiesable_id = $kost->id;
 
-        $properties->id = Str::uuid();
+        $uuid = Str::uuid();
+        $properties->id = $uuid;
         $properties->owner_id = $validated['owner_id'];
 
         $properties->name = $validated['name'];
@@ -97,13 +99,28 @@ class KostController extends Controller
         $properties->public_facilities = $validated['public_facilities'];
         $properties->additional_info = $validated['additional_info'];
         $properties->additional_fee = $validated['additional_fee'];
-        $properties->address = $validated['address'];
-
+        $properties->latitude = $validated['latitude'];
+        $properties->longitude = $validated['longitude'];
+        $properties->status = 1;
 
         $kost->Properties()->save($properties);
 
         $kost->save();
 
+        //redis
+        $redis = Redis::connection();
+        $name = explode(' ', $validated['name']);
+
+        $json = [
+            'id' => $uuid,
+            'name' => $validated['name']
+        ];
+
+        $json_en = json_encode($json);
+
+        foreach ($name as $key){
+            $redis->lpush($key, $json_en);
+        }
         return response()->json([
             'status' => 'success'
         ]);
@@ -120,9 +137,8 @@ class KostController extends Controller
             ]);
         }
 
-        $room = Properties::where('owner_id', $request->owner_id)->where('propertiesable_type', 'App\Kost')->get();
+        $room = Properties::where('owner_id', $request->owner_id)->where('propertiesable_type', 'App\Kost')->paginate();
         return response()->json($room);
     }
-
 
 }

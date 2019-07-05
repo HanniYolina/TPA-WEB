@@ -38,7 +38,8 @@ class ManageApartmentPage extends React.Component{
         super();
 
         this.state = {
-            type : 0
+            type : 0,
+            pageNum : 1,
         }
     }
 
@@ -51,7 +52,7 @@ class ManageApartmentPage extends React.Component{
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }
@@ -77,14 +78,15 @@ class ManageApartmentPage extends React.Component{
             loading : true
         })
         
-        Axios.post('http://localhost:8000/api/getAllApartment', {
+        Axios.post(`http://localhost:8000/api/getAllApartment?page=${this.state.pageNum}`, {
             token: sessionStorage.getItem('token'),
             owner_id : this.state.owner_id,
         }).then(response => {
             console.log(response.data)
             this.setState({
                 status : response.status,
-                allRoom : response.data,
+                allRoom : response.data.data,
+                last_page : response.data.last_page,
                 loading : false
             }, ()=>console.log(this.state.allRoom));
         })
@@ -106,6 +108,20 @@ class ManageApartmentPage extends React.Component{
         this.getUser();
     }
 
+    changePageNum(){
+        let curr = this.state.pageNum
+        if(this.state.pageNum == this.state.last_page){
+            this.setState({
+                pageNum : 1
+            }, ()=> this.getAllRoomById())
+        }
+        else{
+            this.setState({
+                pageNum : curr + 1
+            }, ()=> this.getAllRoomById())
+        }
+    }
+
     render(){
         let content = ""
         if(this.state.type == "update" || this.state.type == "delete"){
@@ -116,6 +132,7 @@ class ManageApartmentPage extends React.Component{
                         <RoomDetail room={room} key={key} type={this.state.type}></RoomDetail>
                     ))
                 }
+                <button onClick={this.changePageNum.bind(this)}>Next</button>
             </div>
         }
         return(

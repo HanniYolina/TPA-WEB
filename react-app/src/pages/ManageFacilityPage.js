@@ -30,7 +30,7 @@ const Tab = styled('div')`
 const Main =styled('div')`
     background-color : white;
     width : 90%;
-    height : 80%;
+    height : auto;
     margin : 0 auto;
     margin-top : 5vh;
     margin-bottom : 5vh;
@@ -64,7 +64,11 @@ class ManageFacilityPage extends React.Component{
             name : "",
             icon : "",
             group : "public",
-            facilities : ""
+            facilities : "",
+            pageNum : 1,
+
+            filterName : null,
+            filterGroup : null
         }
     }
 
@@ -75,9 +79,17 @@ class ManageFacilityPage extends React.Component{
     }
 
     dataChange(ev){
-        this.setState({
-            [ev.target.name] : ev.target.value
-        })
+        if(ev.target.value == "null" || ev.target.value == ""){
+            this.setState({
+                [ev.target.name] : null
+            })    
+        }
+        else{
+            this.setState({
+                [ev.target.name] : ev.target.value
+            })
+        }
+        
     }
     
     submit(ev){
@@ -119,18 +131,18 @@ class ManageFacilityPage extends React.Component{
         this.setState({
             loading : true
         })
-        Axios.post('http://localhost:8000/api/getFacilities',
+        Axios.post(`http://localhost:8000/api/getFacilities?page=${this.state.pageNum}`,
         {
              token: sessionStorage.getItem('token'),
         }
-        ).then(response => {
+        ).then(response => {        
             this.setState({
-                facilities : response.data
+                facilities : response.data.data,
+                last_page : response.data.last_page
             }, ()=> {
                 this.setState({
                     loading : false
                 });
-                // console.log(this.state.facilities)
             })
         })
     }
@@ -144,7 +156,7 @@ class ManageFacilityPage extends React.Component{
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
         }
     }
@@ -164,9 +176,46 @@ class ManageFacilityPage extends React.Component{
         })
     }
 
+    getFilteredFacility(){
+        console.log(this.state.filterName, this.state.filterGroup)
+        this.setState({
+            loading : true
+        })
+        Axios.post(`http://localhost:8000/api/getFilteredFacility?page=${this.state.pageNum}`,
+        {
+             token: sessionStorage.getItem('token'),
+             name : this.state.filterName,
+             group : this.state.filterGroup
+        }
+        ).then(response => {        
+            this.setState({
+                facilities : response.data.data,
+                last_page : response.data.last_page
+            }, ()=> {
+                this.setState({
+                    loading : false
+                });
+            })
+        })
+    }
+
     componentDidMount(){
         this.getUser();
         this.getAllFacilities();
+    }
+
+    changePageNum(){
+        let curr = this.state.pageNum
+        if(this.state.pageNum == this.state.last_page){
+            this.setState({
+                pageNum : 1
+            }, ()=> this.getAllFacilities())
+        }
+        else{
+            this.setState({
+                pageNum : curr + 1
+            }, ()=> this.getAllFacilities())
+        }
     }
 
     render(){
@@ -207,20 +256,42 @@ class ManageFacilityPage extends React.Component{
             </div>
         }else if(this.state.page == "delete"){
             content = <div>
+                <Tab>
+                    <select name="filterGroup" required onChange={this.dataChange.bind(this)}>
+                        <option name="filterGroup" value="null">Choose Tag</option>
+                        <option name="filterGroup" value="public">Public</option>                        
+                        <option name="filterGroup" value="room">Room</option>                        
+                    </select>
+
+                    <input placeholder="Input Name" name="filterName" onChange={this.dataChange.bind(this)}></input>
+                    <button style={divStyle} onClick={this.getFilteredFacility.bind(this)}>Filter</button>                    
+                </Tab>
                 {
                     this.state.facilities && this.state.facilities.map((facilities, key)=> (
                         <PublicFacilities facilities={facilities} key={key} type="delete"></PublicFacilities>
                     ))
                 }
+                <button onClick={this.changePageNum.bind(this)}>Next</button>
             </div>
         }
         else if(this.state.page == "update"){
             content = <div>
+                <Tab>
+                    <select name="filterGroup" required onChange={this.dataChange.bind(this)}>
+                        <option name="filterGroup" value="null">Choose Tag</option>
+                        <option name="filterGroup" value="public">Public</option>                        
+                        <option name="filterGroup" value="room">Room</option>                        
+                    </select>
+
+                    <input placeholder="Input Name" name="filterName" onChange={this.dataChange.bind(this)}></input>
+                    <button style={divStyle} onClick={this.getFilteredFacility.bind(this)}>Filter</button>                    
+                </Tab>
                 {
                     this.state.facilities && this.state.facilities.map((facilities, key)=> (
                         <PublicFacilities facilities={facilities} key={key} type="update"></PublicFacilities>
                     ))
                 }
+                <button onClick={this.changePageNum.bind(this)}>Next</button>
             </div>
         }
         return(

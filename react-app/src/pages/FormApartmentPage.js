@@ -171,8 +171,8 @@ class FormApartmentPage extends React.Component{
         //1
         var address = this.props.address
         if(address){
-            var addressJson = JSON.stringify({'latitute' : address.lat, 'longitute' : address.lon})
-            formData.append('address', addressJson)
+            formData.append('latitude', address.lat)
+            formData.append('longitude', address.lon)
 
         }
         
@@ -234,7 +234,7 @@ class FormApartmentPage extends React.Component{
                 loading : false,
             });
             if(response.data.status == "success"){
-                this.props.history.replace('/manageRentHouse');
+                this.props.history.replace('/manageApartment');
             }
             else{
                 // console.log(response.data)

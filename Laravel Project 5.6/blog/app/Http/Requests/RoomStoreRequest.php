@@ -45,7 +45,8 @@ class RoomStoreRequest extends FormRequest
             'additional_info' => '',
             'additional_fee' => '',
 
-            'address' => 'required'
+            'latitude' => '',
+            'longitude' => '',
 //            'picture_name' => 'sometimes|nullable|mimes:jpeg,jpg,png',
 //            'banner_picture' => 'sometimes|nullable|mimes:jpeg,jpg,png',
 //            'video' => 'sometimes|nullable|mimes:mp4,mov,ogg,qt | max:20000',

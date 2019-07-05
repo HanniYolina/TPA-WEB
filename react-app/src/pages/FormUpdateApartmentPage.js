@@ -180,8 +180,8 @@ class FormUpdateApartmentPage extends React.Component{
         }
         
         if(this.state.address==null){
-            var addressJson = JSON.stringify({'latitute' : address.lat, 'longitute' : address.lon})
-            formData.append('address', addressJson)    
+            formData.append('latitude', address.lat)
+            formData.append('longitude', address.lon)  
         }
         else{
             formData.append('address', this.state.address)
@@ -415,7 +415,7 @@ class FormUpdateApartmentPage extends React.Component{
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }

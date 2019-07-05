@@ -44,6 +44,7 @@ class CreatePropertiesTable extends Migration
             $table->uuid('propertiesable_id');
             $table->string('propertiesable_type');
 
+
             $table->softDeletes();
             $table->timestamps();
         });

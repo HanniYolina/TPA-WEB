@@ -32,7 +32,7 @@ class DeleteFacilityPage extends React.Component{
     render(){
         let button
         if(this.state.delete){
-            button = <PopUp buttonPopup={this.buttonPopup.bind(this)}></PopUp>
+            button = <PopUp buttonPopup={this.buttonPopup.bind(this)} type="delete" text="Are you sure you want to delete this facility?"></PopUp>
         }
         else{
             button = <Redirect to="/manageFacilityPage"/>

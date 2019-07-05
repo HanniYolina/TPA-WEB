@@ -48,6 +48,7 @@
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/phpunit/php-timer" />
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/phpunit/php-token-stream" />
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/phpunit/phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/blog/vendor/predis/predis" />
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/psr/container" />
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/psr/log" />
       <excludeFolder url="file://$MODULE_DIR$/blog/vendor/psr/simple-cache" />

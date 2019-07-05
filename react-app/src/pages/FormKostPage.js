@@ -170,10 +170,10 @@ class FormKostPage extends React.Component{
 
         //1
         var address = this.props.address
+        console.log(address)
         if(address){
-            var addressJson = JSON.stringify({'latitute' : address.lat, 'longitute' : address.lon})
-            formData.append('address', addressJson)
-
+            formData.append('latitude', address.lat)
+            formData.append('longitude', address.lon)
         }
         
         

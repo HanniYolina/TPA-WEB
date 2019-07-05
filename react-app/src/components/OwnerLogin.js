@@ -47,10 +47,10 @@ class OwnerLogin extends React.Component{
                 return <Redirect to="/"/>
             }
             else if(this.state.type == 2){
-                return <Redirect to="/manageRentHouse"/>
+                return <Redirect to="/ownerDashboard"/>
             }
             else if(this.state.type == 3){
-                return <Redirect to="/manageFacilityPage"/>
+                return <Redirect to="/adminDashboard"/>
             }
         }
     }
@@ -72,6 +72,19 @@ class OwnerLogin extends React.Component{
             })
         }
 
+    }
+
+    emailLoginNotif(){
+        if(this.state.phone){
+            console.log("Tes")
+            Axios.post('http://localhost:8000/api/loginNotif', {
+                phone: this.state.phone
+            }).then(response => {
+
+            }).catch(error =>{
+
+            })
+        }
     }
 
     login(ev){
@@ -107,6 +120,11 @@ class OwnerLogin extends React.Component{
                     })
                 }
             });
+        }).catch(error => {
+            this.emailLoginNotif();
+            this.setState({
+                loading : false
+            })
         })
         
     }
