@@ -10,6 +10,7 @@ const BubbleMe = styled('div')`
     padding : 2%;
     align-self : flex-end;
     float : right;
+    word-wrap : break-word;
 `
 const BubblePartner = styled('div')`
     width : 50%;
@@ -18,6 +19,7 @@ const BubblePartner = styled('div')`
     border-radius : 10%;
     margin : 2%;
     padding : 2%;
+    word-wrap : break-word;
 `
 
 class Bubble extends React.Component{

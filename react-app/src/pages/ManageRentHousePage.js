@@ -88,7 +88,7 @@ class ManageRentHousePage extends React.Component{
                 allRoom : response.data.data,
                 last_page : response.data.last_page,
                 loading : false
-            }, ()=>console.log(this.state.allRoom));
+            });
         })
     }
 

@@ -52,5 +52,11 @@ class PremiumPurchaseController extends Controller
 
         return response()->json($transactionCount);
     }
+
+    public function getTransactionById(Request $request){
+        $transaction = PremiumPurchase::where('id', $request->id)->first();
+
+        return $transaction;
+    }
 }
 

@@ -1,9 +1,10 @@
 import React from 'react'
 import PopUp from '../components/PopUp'
 import Axios from 'axios'
+import {Link} from 'react-router-dom'
 
 const UserStyle = {
-    height: '190px',
+    height: 'auto',
     width: '20%',
     margin: '20px',
     padding: '15px',
@@ -22,7 +23,8 @@ class TransactionDetail extends React.Component{
             <span>Price : {transaction.price}</span>
             <br></br>
             <span>Paid at : {transaction.paid_at}</span>
-            
+            <br></br>
+            <Link to={`/invoicePage/${transaction.id}`}>Detail</Link>
         </div>
     )}
 }

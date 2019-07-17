@@ -156,11 +156,51 @@ class FormApartmentPage extends React.Component{
             token: sessionStorage.getItem('token')
         }).then(response => {
             this.setState({
-                owner_id : response.data.user.id
+                owner_id : response.data.user.id,
+                owner_name : response.data.user.name
             })
         })
     }
 
+    storeNotif(id){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/storeNotif', {
+            token: sessionStorage.getItem('token'),
+            user_id : id,
+            contents : this.state.owner_name + " has inserted new Apartment"
+        }).then(response => {
+            this.setState({
+                loading : false
+            })
+        })
+    }
+
+    notifyFollower(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllFollower', {
+            token: sessionStorage.getItem('token'),
+            id : this.state.owner_id
+        }).then(response => {
+            this.setState({
+                loading : false,
+                ownerFollower : response.data
+            }, ()=>{
+
+                // console.log("tes", this.state.ownerFollower)
+                this.state.ownerFollower.forEach(element => {
+                    console.log("notif"+element.follower_id, this.state.owner_name)
+                    this.props.notify("notif"+element.follower_id, this.state.owner_name + " has inserted new Apartment")    
+                    this.storeNotif(element.follower_id)
+                });
+            })
+        })       
+    }
     submit(ev){
         ev.preventDefault();
 
@@ -222,7 +262,7 @@ class FormApartmentPage extends React.Component{
             loading : true
         })
 
-
+        
         Axios.post('http://localhost:8000/api/addApartment', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -235,6 +275,7 @@ class FormApartmentPage extends React.Component{
             });
             if(response.data.status == "success"){
                 this.props.history.replace('/manageApartment');
+                    this.notifyFollower();
             }
             else{
                 // console.log(response.data)

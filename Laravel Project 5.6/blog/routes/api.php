@@ -51,6 +51,7 @@ Route::middleware('jwt.auth')->group(function(){
     Route::post('/countFollower', 'UserFollowerController@countFollower');
     Route::post('/countFollowing', 'UserFollowerController@countFollowing');
 
+    Route::post('/getTransactionById', 'PremiumPurchaseController@getTransactionById');
     //admin
     Route::post('/addFacilities', 'FacilitiesController@Store');
     Route::post('/updateFacilities', 'FacilitiesController@updateFacilities');
@@ -114,7 +115,13 @@ Route::middleware('jwt.auth')->group(function(){
     Route::post('/getAllPremiumByUserId', 'PremiumOwnerController@getAllPremiumByUserId');
 
     Route::post('/countProperties', 'PropertiesController@countProperties');
+    Route::post('/getAllFollower', 'UserFollowerController@getAllFollower');
+    Route::post('/getPremiumOwnerByItsId', 'PremiumOwnerController@getPremiumOwnerByItsId');
 
+
+    Route::post('/storeNotif', 'NotifController@store');
+    Route::post('/getAllNotif', 'NotifController@getAllNotif');
+    Route::post('/readAll', 'NotifController@readAll');
 });
 
 Route::post('/getPremiumOwnerById', 'PremiumOwnerController@getPremiumOwnerById');

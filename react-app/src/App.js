@@ -44,6 +44,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import SearchPost from './pages/SearchPost';
 import GuestProfilePage from './pages/GuestProfilePage';
 import './font-awesome-4.7.0/css/font-awesome.min.css'
+import InvoicePage from './pages/InvoicePage';
+import HistoryPremiumDetail from './pages/HistoryPremiumDetail';
 
 class App extends Component {
   constructor(){
@@ -57,8 +59,13 @@ class App extends Component {
   send(to_id, from_id, content){
     //harusnya newMessagem from_id , to_id
     //kalo gni msh diri sndiri ngirim
-    console.log(content)
+    // console.log(content)
     socket.emit('newMessage', to_id, from_id, content)
+  }
+
+  notify(to_id, content){
+    console.log(content)
+    socket.emit('newNotif', to_id, content)
   }
 
   changeMode(){
@@ -105,17 +112,21 @@ class App extends Component {
         <BrowserRouter>
             <Route path="/" component={() => <NavBar mode={this.state.mode}/>} exact/>
             <Route path="/" component={HomePage} exact />
+
             <Route path="/login" component={LoginPage} exact />
             <Route path="/register/guest" component={RegisterGuest} exact/>
             <Route path="/register/owner" component={RegisterOwner} exact/>
             <Route path="/search" component={SearchPage} exact/>
-            <Route path='/room/:id' component={RoomPage} exact />
+
+            {/* <Route path='/room/:id' component={RoomPage} exact /> */}
+            <Route path='/room/:id' component={()=> <RoomPage notify={this.notify}></RoomPage>}></Route>
+
             <Route path='/profile' component={() => <ProfilePage mode={this.state.mode}/>} exact />
             <Route path='/editProfile' component={EditProfilePage}></Route>
             <Route path='/changePassword' component={ChangePassword}></Route>
             <Route path='/banned' component={BannedPage}></Route>
 
-            <Route path='/chat' component={()=> <Chat send={this.send}></Chat>}></Route>
+            <Route path='/chat' component={()=> <Chat send={this.send} notify={this.notify}></Chat>}></Route>
             <Route path='/generalPostPage' component={GeneralPostPage}></Route>
 
             {/* guest*/}
@@ -126,16 +137,23 @@ class App extends Component {
             {/* owner */}
             <Route path='/ownerDashboard' component={OwnerDashboard}></Route>
             <Route path='/manageRentHouse' component={ManageRentHousePage}></Route>
-            <Route path='/formKost' component={FormKostPage}></Route>
-            <Route path='/formUpdate/:id' component={FormUpdatePage}></Route>
+            <Route path='/formKost' component={()=> <FormKostPage notify={this.notify}></FormKostPage>}></Route>
+            <Route path='/formUpdate/:id' component={()=> <FormUpdatePage notify={this.notify}></FormUpdatePage>}></Route>
+            
             <Route path='/followingPage' component={FollowingPage}></Route>
 
             <Route path='/manageApartment' component={ManageApartmentPage}></Route>
-            <Route path='/formApartment' component={FormApartmentPage}></Route>
+            <Route path='/formApartment' component={()=> <FormApartmentPage notify={this.notify}></FormApartmentPage>}></Route>
+            <Route path='/formUpdateApartment/:id' component={()=> <FormUpdateApartmentPage notify={this.notify}></FormUpdateApartmentPage>}></Route>
+
+
             <Route path='/formUpdateApartment/:id' component={FormUpdateApartmentPage}></Route>
             <Route path='/premiumProduct' component={PremiumProduct}></Route>
             <Route path='/orderPremium' component={OrderPremiumPage}></Route>
             <Route path='/historyPremium' component={HistoryPremiumPage}></Route>
+
+            <Route path='/historyPremiumDetail/:id' component={HistoryPremiumDetail}></Route>
+            
 
             {/* admin */}
             <Route path='/adminDashboard' component={AdminDashboard}></Route>
@@ -156,6 +174,7 @@ class App extends Component {
             <Route path='/searchPost/:tag_id' component={SearchPost} exact />            
 
             <Route path='/manageReport' component={ManageReport}></Route>
+            <Route path='/invoicePage/:id' component={InvoicePage}></Route>
 
         </BrowserRouter>
      </div>

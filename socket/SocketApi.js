@@ -12,6 +12,11 @@ io.on('connection', function(socket){
         console.log(from_id, to_id,message)
         io.emit(to_id, from_id, message)
     })
+
+    socket.on('newNotif', function(to_id, content){
+        console.log(to_id, content)
+        io.emit("notif"+to_id, content)
+    })
 });
 
 module.exports = socketApi;

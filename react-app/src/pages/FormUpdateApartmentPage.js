@@ -153,9 +153,51 @@ class FormUpdateApartmentPage extends React.Component{
         }).then(response => {
             this.setState({
                 owner_id : response.data.user.id,
-                type : response.data.user.type
+                type : response.data.user.type,
+                owner_name : response.data.user.name
             })
         })
+    }
+
+    
+    storeNotif(id){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/storeNotif', {
+            token: sessionStorage.getItem('token'),
+            user_id : id,
+            contents : this.state.owner_name + " has updated his Apartment"
+        }).then(response => {
+            this.setState({
+                loading : false
+            })
+        })
+    }
+
+    notifyFollower(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllFollower', {
+            token: sessionStorage.getItem('token'),
+            id : this.state.owner_id
+        }).then(response => {
+            this.setState({
+                loading : false,
+                ownerFollower : response.data
+            }, ()=>{
+
+                // console.log("tes", this.state.ownerFollower)
+                this.state.ownerFollower.forEach(element => {
+                    console.log("notif"+element.follower_id, this.state.owner_name)
+                    this.props.notify("notif"+element.follower_id, this.state.owner_name + " has updated his Apartment")    
+                    this.storeNotif(element.follower_id)
+                });
+            })
+        })       
     }
 
     submit(ev){
@@ -258,6 +300,7 @@ class FormUpdateApartmentPage extends React.Component{
             });
             
             if(response.data.message == "success"){
+                this.notifyFollower();
                 this.props.history.replace('/manageRentHouse');
             }
         })

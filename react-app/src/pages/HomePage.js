@@ -6,6 +6,7 @@ import Axios from 'axios';
 import Loading from '../components/Loading'
 import Footer from '../components/Footer';
 
+
 const titleStyle = {
     color: 'black',
     fontSize: '40px',
@@ -166,6 +167,7 @@ class HomePage extends React.Component{
     }
     
     componentDidMount(){
+        
         this.getProperties();
     }
 
@@ -232,6 +234,7 @@ class HomePage extends React.Component{
             <div style={{padding : '5%'}}>
                 <ApartmentArea></ApartmentArea>
             </div>
+
 
             <Footer></Footer>
         </div>

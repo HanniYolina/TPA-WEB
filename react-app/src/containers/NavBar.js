@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import Axios from 'axios';
 import {connect} from 'react-redux'
 import SearchForm from '../components/SearchForm';
+import {setNotified, connect as connectNotif} from '../Api.js';
+import Notification from '../components/Notification.js'
 
 const navStyle = {
     backgroundColor: '#3cba92',
@@ -28,13 +30,27 @@ class NavBar extends React.Component{
     constructor(){
         super();
 
+        setNotified(this.recieveNotif.bind(this))
+
         this.state = {
             user : "",
             display : "none",
 
-            loadUser : 0
+            loadUser : 0,
+            allNotif : []
         }
     }
+
+    recieveNotif(notif){
+        let notifComponent
+        notifComponent = <Notification content={notif}></Notification>
+        
+
+        this.setState({
+            allNotif : [...this.state.allNotif, notifComponent]
+        })
+    }
+
     deleteToken(){
         Axios.post('http://localhost:8000/api/logout', {
             token: sessionStorage.getItem('token')
@@ -44,7 +60,7 @@ class NavBar extends React.Component{
 
     getUser(){
         if(this.state.loadUser == 0){
-        console.log("a")
+        // console.log("a")
 
             this.setState({
                 loading : true,
@@ -58,6 +74,10 @@ class NavBar extends React.Component{
                     user : response.data.user,
                     loading : false,
                     loadUser : 0
+                },()=>{
+                    console.log("notif"+this.state.user.id)
+                    connectNotif("notif"+this.state.user.id);
+                    this.getAllNotifs();
                 })
             })
         }
@@ -80,10 +100,57 @@ class NavBar extends React.Component{
         }
     }
 
+    getAllNotifs(){
+        Axios.post('http://localhost:8000/api/getAllNotif', {
+                token: sessionStorage.getItem('token'),
+                user_id : this.state.user.id
+            }).then(response => {
+                this.setState({
+                    allNotif : [],
+                    loading : false
+                })
+
+                let notifReceive
+
+                response.data.map(element => {
+                    notifReceive = <Notification content={element.content}></Notification>   
+                    
+                    
+                    this.setState({
+                        allNotif : [...this.state.allNotif, notifReceive]
+                    })
+                })
+            })
+    }
+
+    notifClicked(){
+        this.setState({
+            showNotification : this.state.showNotification ? false : true
+        },()=>{
+            if(this.state.showNotification){
+                Axios.post('http://localhost:8000/api/readAll', {
+                    token: sessionStorage.getItem('token'),
+                    user_id : this.state.user.id
+                })
+            }
+            else{
+                this.setState({
+                    allNotif : []
+                })
+            }
+        })
+    }
+
     render(){
         let button
         if(sessionStorage.getItem('token')){
             // console.log(this.state.user)
+
+            let showNotif
+            if(this.state.showNotification){
+                showNotif = this.state.allNotif
+            }
+
             if(this.state.user.type == 2){
                 button = 
                 <span>
@@ -98,16 +165,19 @@ class NavBar extends React.Component{
                         <Link to="/chat"><NavItem><span>Chat</span></NavItem></Link>
                         <Link to='/profile'><NavItem><span>Profile</span></NavItem></Link>
                         <Link to='/'><NavItem onClick={this.deleteToken}><span>Log Out</span></NavItem></Link>
+                        <i className="fa fa-bell" onClick={this.notifClicked.bind(this)} style={{color :  this.state.allNotif.length != 0 ? '#ffaa3b' : 'black'}}></i>
+                        {showNotif}
                     </div>
                 </span>
                 if(window.innerWidth < 1150) {
                     button =
                     <div style={{display : 'flex'}}>
                         <Link to='/'><img src={logoImg} id="logo"></img></Link>
+                        <i className="fa fa-bell" onClick={this.notifClicked.bind(this)} style={{color :  this.state.allNotif.length != 0 ? '#ffaa3b' : 'black'}}></i>
+                        {showNotif}
                         <SearchForm></SearchForm>
                         <div style={{float : 'right'}} onClick={this.changeDisplay.bind(this)}><img src={burgerImg} id="logo"></img></div>
                         <div style={{display : `${this.state.display}`, backgroundColor : '#3cba92', padding : '5%'}}>
-
                             <p><Link to="/ownerDashboard">Dashboard</Link></p>
                             <p><Link to="/historyPremium">History</Link></p>
                             <p><Link to="/generalPostPage">Posts</Link></p>
@@ -132,12 +202,16 @@ class NavBar extends React.Component{
                         <Link to="/followingPage"><NavItem><span>Following Page</span></NavItem></Link>
                         <Link to='/profile'><NavItem><span>Profile</span></NavItem></Link>
                         <Link to='/'><NavItem onClick={this.deleteToken}><span>Log Out</span></NavItem></Link>
+                        <i className="fa fa-bell" onClick={this.notifClicked.bind(this)} style={{color :  this.state.allNotif.length != 0 ? '#ffaa3b' : 'black'}}></i>
+                        {showNotif}
                     </div>
                 </span>
                 if(window.innerWidth < 650) {
                     button =
                     <div style={{display : 'flex'}}>
                         <Link to='/'><img src={logoImg} id="logo"></img></Link>
+                        <i className="fa fa-bell" onClick={this.notifClicked.bind(this)} style={{color :  this.state.allNotif.length != 0 ? '#ffaa3b' : 'black'}}></i>
+                        {showNotif}
                         <SearchForm></SearchForm>                        
                         <div style={{float : 'right'}} onClick={this.changeDisplay.bind(this)}><img src={burgerImg} id="logo"></img></div>
                         <div style={{display : `${this.state.display}`, backgroundColor : '#3cba92', padding : '5%'}}>
@@ -191,9 +265,9 @@ class NavBar extends React.Component{
             }
             // else if(this.props)
 
+
             return(
                 <div style={navStyle}>
-                    
                     {button}
                 </div>
             )
@@ -201,8 +275,8 @@ class NavBar extends React.Component{
         else{
             return(
                 <div style={navStyle} >
-                    <Link to='/'><img src={logoImg} id="logo"></img></Link>
-        
+                    <Link to='/'><img src={logoImg} id="logo"></img></Link> 
+                   
                     <div id='navbar' style={{display : 'flex'}}>
                         <SearchForm></SearchForm>
                         <Link to="/generalPostPage"><NavItem><span>Posts</span></NavItem></Link>

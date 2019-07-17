@@ -45,6 +45,7 @@ class HistoryPremiumPage extends React.Component{
             token: sessionStorage.getItem('token')
         }).then(response => {
             this.setState({
+                user : response.data.user,
                 id : response.data.user.id,
                 type : response.data.user.type,
                 loading : false
@@ -92,7 +93,7 @@ class HistoryPremiumPage extends React.Component{
                     <BreadCrumbs></BreadCrumbs>    
                     {
                         this.state.premium && this.state.premium.map((premium, key)=> (
-                            <PremiumOwnerDetail premium={premium} type="delete" key={key}></PremiumOwnerDetail>
+                            <PremiumOwnerDetail premium={premium} user={this.state.user} type="delete" key={key}></PremiumOwnerDetail>
                         ))
                     }
                     <button onClick={this.changePageNum.bind(this)}>Next</button>

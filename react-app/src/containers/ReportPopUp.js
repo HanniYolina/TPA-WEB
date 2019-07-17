@@ -4,19 +4,16 @@ import Loading from '../components/Loading'
 import Axios from 'axios'
 
 const Popup = styled('div')`  
-    position: absolute;  
-    width: 100%;
-    height: 100%;  
+    width: 100vw;
+    height: auto;  
     top: 0;
     left: 0; 
     right: 0; 
     bottom: 0;
     margin: auto;  
-    background-color: rgba(0,0,0, 0.5);  
     z-index : 999
 `
 const PopupInner = styled('div')`  
-    position: absolute;  
     left: 25%;  
     right: 25%;  
     top: 25%;  
@@ -53,22 +50,24 @@ class PopUp extends React.Component{
     }
 
     createReport(){
-        this.setState({
-            loading : true
-        });
+        this.props.notify();
 
-        Axios.post(`http://localhost:8000/api/createReport`,{
-            token: sessionStorage.getItem('token'),
-            user_id : this.props.user_id,
-            properties_id : this.props.properties_id,
-            contents : this.state.contents,
-            type : this.state.reportType
-        }).then(response => {
-            this.setState({
-                loading : false,
-            })
-            this.props.closeReport();
-        })
+        // this.setState({
+        //     loading : true
+        // });
+
+        // Axios.post(`http://localhost:8000/api/createReport`,{
+        //     token: sessionStorage.getItem('token'),
+        //     user_id : this.props.user_id,
+        //     properties_id : this.props.properties_id,
+        //     contents : this.state.contents,
+        //     type : this.state.reportType
+        // }).then(response => {
+        //     this.setState({
+        //         loading : false,
+        //     })
+        //     this.props.closeReport();
+        // })
     }
 
     dataChange(ev){

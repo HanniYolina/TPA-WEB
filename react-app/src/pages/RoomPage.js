@@ -44,11 +44,6 @@ const ButtonReply = styled('div')`
     text-align : center;
 `
 
-const Rating = {
-    fontFamily : "FontAwesome",
-    content : "\f005"
-}
-
 class RoomPage extends React.Component{
     constructor(){
         super();
@@ -425,6 +420,27 @@ class RoomPage extends React.Component{
         })
     }
 
+    storeNotif(id){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/storeNotif', {
+            token: sessionStorage.getItem('token'),
+            user_id : id,
+            contents : this.state.user.name + " has give a report"
+        }).then(response => {
+            this.setState({
+                loading : false
+            })
+        })
+    }
+
+    notifyFollower(){
+        console.log("notif"+this.state.owner_id, this.state.user.name)
+        this.props.notify("notif"+this.state.owner_id, this.state.user.name + " has give a report")    
+        this.storeNotif(this.state.owner_id)
+    }
 
     render(){
         let loading;
@@ -471,7 +487,7 @@ class RoomPage extends React.Component{
 
         let reportForm;
         if(this.state.report){
-            reportForm = <ReportPopUp user_id={this.state.user_id} properties_id={this.props.match.params.id} closeReport={this.closeReport.bind(this)}></ReportPopUp>
+            reportForm = <ReportPopUp user_id={this.state.user_id} properties_id={this.props.match.params.id} notify={this.notifyFollower.bind(this)} closeReport={this.closeReport.bind(this)}></ReportPopUp>
         }
 
         if(this.state.type == 1){
@@ -589,7 +605,7 @@ class RoomPage extends React.Component{
                                 }}></i>
                             </div>
                             <input type="text" placeholder="Input Review" name="contents" onChange={this.dataChange.bind(this)}></input>
-                            {console.log(this.state.errorReview)}
+                            {/* {console.log(this.state.errorReview)} */}
                             <span>{this.state.errorReview}</span>
                             <button onClick={this.addReview.bind(this)}>Review</button>                            
                         </ReviewStyle>

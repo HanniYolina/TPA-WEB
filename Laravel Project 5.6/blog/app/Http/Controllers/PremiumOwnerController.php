@@ -85,4 +85,9 @@ class PremiumOwnerController extends Controller
         $premium = PremiumOwner::where('user_id',$request->id)->paginate();
         return response()->json($premium);
     }
+
+    public function getPremiumOwnerByItsId(Request $request){
+        $premium = PremiumOwner::where('id', $request->id)->first();
+        return $premium;
+    }
 }

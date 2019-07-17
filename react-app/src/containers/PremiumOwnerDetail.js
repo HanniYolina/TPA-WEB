@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import {Link} from 'react-router-dom'
 
 const UserStyle = {
     height: 'auto',
@@ -71,6 +72,8 @@ class PremiumOwnerDetail extends React.Component{
             {status}
             <br></br>
             <span>Duration : {diffDate.months()} months, {diffDate.days()} days , {diffDate.hours()} hours, {diffDate.minutes()} minutes</span>
+            <br></br>
+            <Link to={`/historyPremiumDetail/${premium.id}`}>Detail</Link>
         </div>
     )}
 }

@@ -8,6 +8,7 @@ import Axios from 'axios';
 import PublicFacilities from '../containers/PublicFacilities'
 import Loading from '../components/Loading';
 import BreadCrumbs from '../components/BreadCrumbs';
+import {connect as connectNotif} from '../Api.js';
 
 const Container = styled('div')`
     width : 80vw;
@@ -153,9 +154,52 @@ class FormKostPage extends React.Component{
         }).then(response => {
             this.setState({
                 owner_id : response.data.user.id,
-                type : response.data.user.type
+                type : response.data.user.type,
+                owner_name : response.data.user.name
             })
         })
+    }
+
+    storeNotif(id){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/storeNotif', {
+            token: sessionStorage.getItem('token'),
+            user_id : id,
+            contents : this.state.owner_name + " has updated his Kost"
+        }).then(response => {
+            this.setState({
+                loading : false
+            })
+        })
+    }
+
+    notifyFollower(){
+        this.setState({
+            loading : true
+        })
+
+        Axios.post('http://localhost:8000/api/getAllFollower', {
+            token: sessionStorage.getItem('token'),
+            id : this.state.owner_id
+        }).then(response => {
+            this.setState({
+                loading : false,
+                ownerFollower : response.data
+            }, ()=>{
+
+                // console.log("tes", this.state.ownerFollower)
+                this.state.ownerFollower.forEach(element => {
+                    console.log("notif"+element.follower_id, this.state.owner_name)
+                    this.props.notify("notif"+element.follower_id, this.state.owner_name + " has updated his Kost")    
+                    this.storeNotif(element.follower_id)
+                });
+            })
+        })
+
+            
     }
 
     submit(ev){
@@ -267,6 +311,8 @@ class FormKostPage extends React.Component{
             
             if(response.data.message == "success"){
                 this.props.history.replace('/manageRentHouse');
+                this.notifyFollower();
+
             }
         })
     }

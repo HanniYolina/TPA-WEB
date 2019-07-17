@@ -65,6 +65,7 @@ class OwnerDashboard extends React.Component{
                 type : response.data.user.type,
             }, ()=>{
                 this.countProperties();
+                this.countFollower();
             })
         })
     }
@@ -82,6 +83,17 @@ class OwnerDashboard extends React.Component{
         })
     }
 
+    countFollower(){
+        Axios.post('http://localhost:8000/api/countFollower', {
+            token: sessionStorage.getItem('token'),
+            id : this.state.user_id
+        }).then(response => {
+            this.setState({
+                followerCount : response.data,
+                loading : false
+            })
+        })
+    }
     componentDidMount(){
         this.getUser();
     }
@@ -109,6 +121,12 @@ class OwnerDashboard extends React.Component{
                             <BoxStyle>
                                 <span>Apartment</span>
                                 <Number>{this.state.totalApartment}</Number>
+                            </BoxStyle>
+                        </Link>
+                        <Link to='/'>                        
+                            <BoxStyle>
+                                <span>Follower</span>
+                                <Number>{this.state.followerCount}</Number>
                             </BoxStyle>
                         </Link>
                     </div>

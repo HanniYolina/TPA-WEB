@@ -22,7 +22,6 @@ const ListPartner = styled('div')`
 const ChatDetail = styled('div')`
     width : 65%;
     height : calc(100vh - 50px);
-    padding-top : 100px;
 `
 const Display = styled('div')`
     display : flex;
@@ -64,12 +63,12 @@ class Chat extends React.Component{
         this.state = {
             id : "",
             content : "",
-            to_id : null
+            to_id : null,
+            allChat : []
         }
     }
     
     getUser(){
-        console.log("b")
         this.setState({
             loading : true
         })
@@ -79,6 +78,7 @@ class Chat extends React.Component{
         }).then(response => {
             this.setState({
                 id : response.data.user.id,
+                name : response.data.user.name,
                 type : response.data.user.type,
                 loading : false
             },()=>{
@@ -181,6 +181,7 @@ class Chat extends React.Component{
             from_id : this.state.id,
             contents : this.state.content
         }).then(response => {
+            // this.notifyChatPartner();
             this.setState({
                 loading : false
             })
@@ -235,6 +236,32 @@ class Chat extends React.Component{
         })
     }
 
+    // storeNotif(id){
+    //     this.setState({
+    //         loading : true
+    //     })
+
+    //     Axios.post('http://localhost:8000/api/storeNotif', {
+    //         token: sessionStorage.getItem('token'),
+    //         user_id : id,
+    //         contents : this.state.name + " has chat you"
+    //     }).then(response => {
+    //         this.setState({
+    //             loading : false
+    //         })
+    //     })
+    // }
+
+    // notifyChatPartner(){
+    //     this.setState({
+    //         loading : true
+    //     })
+
+    //     this.props.notify("notif"+this.state.to_id, this.state.name + " has chat you")    
+    //     this.storeNotif(this.state.to_id)
+              
+    // }
+
     render(){
         let loading
         if(this.state.loading){
@@ -253,6 +280,9 @@ class Chat extends React.Component{
                                 <ListChat onClick={this.changeToId.bind(this,chatList.last_chat.to_id, chatList.last_chat.from_id)}>
                                     <p>{chatList.user.name}</p>                                    
                                     <p>{chatList.last_chat.contents}</p>
+                                    <div>
+                                        <span>{chatList.unread}</span>
+                                    </div>
                                 </ListChat>
                             ))
                         }

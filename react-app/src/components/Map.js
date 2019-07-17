@@ -40,11 +40,10 @@ class Map extends React.Component{
         if (marker) { // check
             this.mymap.removeLayer(marker); // remove
 
-            for(let i=0; i<randomMarker.length; i++){
-                this.mymap.removeLayer(randomMarker[i])
-            }
-
             if(this.props.search == "true"){
+                for(let i=0; i<randomMarker.length; i++){
+                    this.mymap.removeLayer(randomMarker[i])
+                }
                 const min = -0.005;
                 const max = 0.005;
                 for(let i=0; i<5; i++){
@@ -136,6 +135,10 @@ class Map extends React.Component{
                 this.mymap.on("click",(e)=> this.mapClick(e));
             });
         }
+    }
+
+    componentWillUnmount(){
+        this.mymap = null;
     }
 
     render(){

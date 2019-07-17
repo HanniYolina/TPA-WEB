@@ -86,6 +86,22 @@ class UserFollowerController extends Controller
         return response()->json(($allFollow));
     }
 
+    public function getAllFollower(Request $request){
+        $validate = Validator::make($request->all(),[
+            'id' => 'required|string',
+        ]);
+
+        if($validate->fails()){
+            return response()->json([
+                'message' => $validate->errors()->first()
+            ]);
+        }
+
+        $allFollow = UserFollower::where('user_id', $request->id)->get();
+
+        return response()->json(($allFollow));
+    }
+
     public function countFollower(Request $request){
         $validate = Validator::make($request->all(),[
             'id' => 'required|string',

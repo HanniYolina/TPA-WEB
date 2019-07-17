@@ -247,6 +247,7 @@ class UserController extends Controller
         $redis->hmset('chat.'.$chat_room_id.':'.$newId, 'chat_id', $newId, 'to_id', $to_id, 'from_id', $from_id, 'contents', $contents);
         $redis->zadd('chat.room:'.$chat_room_id, $newId, $newId);
 
+
         return "success";
 
     }
@@ -277,7 +278,8 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'chat' => $arrItem
+            'chat' => $arrItem,
+            'read' => $read
         ]);
     }
 
@@ -293,10 +295,14 @@ class UserController extends Controller
             $last_id = $redis->zrangebyscore('chat.room:'.$chat_room_id, $new_id, $new_id)[0];
             $message = $redis->hgetall('chat.'.$chat_room_id.':'.$last_id);
 
+            $read = $redis->get($arr[$i].':'.$chat_room_id)? $redis->get($arr[$i].':'.$chat_room_id):0;
+            $unread = $last_id - $read;
+
             $data = [
                 'id' => $arr[$i],
                 'last_chat' => $message,
-                'user' => User::where('id', $arr[$i])->first()
+                'user' => User::where('id', $arr[$i])->first(),
+                'unread' => $unread,
             ];
 
             array_push($arrJson, $data);
